@@ -1,3 +1,35 @@
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local TextBox = Instance.new("TextBox")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Position = UDim2.new(0.67110455, 0, 0.723658025, 0)
+Frame.Size = UDim2.new(0, 258, 0, 128)
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.Size = UDim2.new(0, 258, 0, 23)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "InvalidsFlight V.01"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextSize = 14.000
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.Position = UDim2.new(0.0852713212, 0, 0.3046875, 0)
+TextBox.Size = UDim2.new(0, 200, 0, 50)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = "E for flight"
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextSize = 14.000
+
 -- Services
 local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
@@ -36,15 +68,15 @@ local movementNormals = {
 
 -- Helper functions
 local function AddBodyMovers(humanoidRootPart)
-	
+
 	local bodyPosition = Instance.new("BodyPosition")
 	bodyPosition.Position = humanoidRootPart.Position
 	bodyPosition.MaxForce = Vector3.new(10000,10000,10000)
 	bodyPosition.P = 20000
 	bodyPosition.D = 1000
-	
+
 	bodyPosition.Parent = humanoidRootPart
-	
+
 	return bodyPosition
 end
 
@@ -52,21 +84,21 @@ end
 local function Enable()
 	humanoid.PlatformStand = true
 	isActive = true
-	
+
 	local bodyMover = AddBodyMovers(humanoidRootPart)
 	currentBodyMover = bodyMover
-	
+
 	local function ChangePosition(normal)
 		bodyMover.Position += normal * SPEED
 	end
-	
+
 	runServiceLoop = runService.RenderStepped:Connect(function()
 		for keyCode, func in pairs(movementNormals) do
 			if userInputService:IsKeyDown(keyCode) == false then continue end
 			ChangePosition(func())
 		end
 	end)
-	
+
 	controllModule:Disable()
 end
 
@@ -74,7 +106,7 @@ end
 local function Disable()
 	humanoid.PlatformStand = false
 	isActive = false
-	
+
 	runServiceLoop:Disconnect()
 	currentBodyMover:Destroy()
 	controllModule:Enable()
@@ -83,7 +115,7 @@ end
 local function InputBegan(input)
 	if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
 	if input.KeyCode ~= ENABLE_KEY then return end
-	
+
 	if isActive then
 		Disable()
 	else
